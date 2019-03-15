@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+
+  esd:
+    image: elasticsearch:6.6.2
+    ports:
+      - "9200:9200"
+
+  esd-hd:
+    image: containerize/elastichd
+    ports:
+      - "9800:9800"
+    links:
+      - esd
+
+  workspace:
+    image: khhdocker/workspace:1.1
+    tty: true
+
