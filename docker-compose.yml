@@ -6,15 +6,53 @@ services:
     image: elasticsearch:6.6.2
     ports:
       - "9200:9200"
+    networks:
+      esd:
+        ipv4_address: 192.168.8.2
 
-  esd-hd:
+  esd-hd-a:
+    image: kibana:latest
+    ports:
+      - "5602:5601"
+    environment:
+      ELASTICSEARCH_URL: http://192.168.8.2:9200
+    networks:
+      esd:
+        ipv4_address: 192.168.8.3
+
+
+  esd-hd-b:
     image: containerize/elastichd
     ports:
       - "9800:9800"
-    links:
-      - esd
+    networks:
+      esd:
+        ipv4_address: 192.168.8.5
+
+  # esd-hd-b:
+  #   image: kibana:6.6.2
+  #   ports:
+  #     - "5601:5601"
+  #   environment:
+  #     ELASTICSEARCH_URL: http://esd
+  #   links:
+  #     - esd
 
   workspace:
     image: khhdocker/workspace:1.1
     tty: true
+    networks:
+      esd:
+        ipv4_address: 192.168.8.4
+
+
+networks:
+  esd:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 192.168.8.0/24
+        gateway: 192.168.8.1
+
 
